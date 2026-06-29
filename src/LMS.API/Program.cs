@@ -1,4 +1,10 @@
+using LMS.Domain.Interfaces;
+using LMS.Infrastructure.Repositories;
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddSingleton<IAssignmentRepository, InMemoryAssignmentRepository>();
+builder.Services.AddSingleton<ISubmissionRepository, InMemorySubmissionRepository>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
