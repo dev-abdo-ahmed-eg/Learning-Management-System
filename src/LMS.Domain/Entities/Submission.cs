@@ -10,4 +10,5 @@ public class Submission
     public string Answer { get; set; } = string.Empty;
     public SubmissionStatus Status { get; set; }
     public DateTime SubmittedAt { get; set; }
+    public Grade? Grade { get; set; }
 }
