@@ -91,12 +91,14 @@ The design pattern solves these issues by pulling the varying behaviors out of t
 
 ---
 
-## Personal Notes
-
-*   **Observation:** "Interface" often refers to the **concept of a supertype** (interface OR abstract class), not strictly the Java keyword.
-*   **Interview Point:** Composition is better than inheritance for **runtime flexibility** and **the ability to encapsulate change**.
-*   **Misunderstanding:** Don't confuse "Strategy" with just "Interfaces." The pattern is about the *structure* of how interfaces encapsulate a family of algorithms.
-*   **Advice:** Look for the "Change." If you are overriding methods to *disable* functionality (like making a `DecoyDuck` not fly), you've identified a behavior that needs to be encapsulated.
+## 📝 My Takeaways
+* Separate what changes from what stays the same.
+* Encapsulate the parts that vary so they can change independently.
+* Program to interfaces (supertypes), not concrete implementations.
+* Declare variables using the interface type whenever possible.
+* Prefer composition over inheritance because it provides more flexibility.
+* A Strategy Pattern groups related algorithms into separate classes, making them interchangeable.
+* Design patterns provide proven ways to organize classes and objects for common design problems.
 
 ---
 
@@ -176,13 +178,15 @@ The Observer Pattern introduces a **Subject interface** and an **Observer interf
 
 ---
 
-## Personal Notes
-
-*   **Observation:** A Subject is a **publisher** and an Observer is a **subscriber** (foundation for "Pub/Sub").
-*   **Interview Point:** The Observer Pattern is the textbook example of **Loose Coupling**.
-*   **Misunderstanding:** Standard Observer is a direct relationship; Publish/Subscribe often involves a middleman broker.
-*   **Advice:** Prefer the **Pull model** to avoid changing every observer's interface when new data types are added.
-*   **Context:** Seen in UI frameworks (Java Swing's `ActionListener`) and reactive programming (RxJava).
+## 📝 My Takeaways
+* The Observer Pattern defines a one-to-many relationship between a subject and its observers.
+* When the subject's state changes, all registered observers are notified automatically.
+* This pattern promotes loose coupling because the subject only depends on the Observer interface.
+* Loose coupling makes systems easier to extend and maintain.
+* Data can be delivered using either:
+* - Push model: the subject sends data to observers.
+* - Pull model: observers request the data they need (usually preferred).
+* The Observer Pattern is the foundation of the Publish/Subscribe concept, although Pub/Sub is a more advanced architecture.
 
 ---
 
@@ -259,13 +263,16 @@ The pattern treats condiments as **wrappers** around the beverage object.
 
 ---
 
-## Personal Notes
-
-*   **Observation:** Inheritance is used for **type matching**, not behavior (which comes from composition).
-*   **Interview Point:** Java I/O (`BufferedInputStream` wrapping `FileInputStream`) is the classic example.
-*   **Misunderstanding:** A decorator **is the same type** as the component it wraps, allowing it to take its place.
-*   **Advice:** If instantiation becomes messy, combine with **Factory** or **Builder** patterns.
-*   **When to Use:** Use for core objects needing combined "add-ons." For static variations, simple subclasses are better.
+## 📝 My Takeaways
+* The Decorator Pattern adds new behavior to objects dynamically without changing their class.
+* Decorators implement the same interface as the objects they decorate.
+* A decorator adds its own behavior before or after delegating work to the wrapped object.
+* Every decorator both:
+* - IS-A Component (implements the same interface).
+* - HAS-A Component (wraps another component).
+* This pattern is a practical application of the Open-Closed Principle.
+* The Open-Closed Principle means classes should be open for extension but closed for modification.
+* Don't apply the Open-Closed Principle everywhere—using it unnecessarily can make code more complicated.
 
 ---
 
@@ -515,13 +522,19 @@ The pattern decouples requester from performer via a uniform interface.
 
 ---
 
-## Personal Notes
-
-*   **Diner Analogy:** Client (You) writes order (Command). Waitress (Invoker) takes order to Cook (Receiver). Waitress just passes the slip.
-*   **Interview Tip:** For "Undo" functionality, Command Pattern is the answer—store state inside the command object.
-*   **Advice:** Use **Null Object** (`NoCommand`) to initialize slots and prevent `if (command != null)` checks.
-*   **Misunderstanding:** Strategy encapsulates *algorithms* for a task; Command encapsulates a *request* for a receiver.
-*   **Modern Context:** **Lambdas** can replace simple ConcreteCommand classes if the interface has one abstract method, reducing "class explosion".
+## 📝 My Takeaways
+* The Command Pattern encapsulates a request as an object.
+* A command object binds together:
+* - the action
+* - the receiver
+* Commands expose a common interface (typically Execute() and optionally Undo()).
+* The Invoker doesn't know how the request is performed—it simply executes the command.
+* The Receiver contains the actual business logic.
+* This pattern makes it easy to:
+* - queue requests,
+* - log operations,
+* - support undo/redo,
+* - decouple the sender from the receiver.
 
 ---
 
