@@ -1,127 +1,162 @@
-# Learning-Management-System
-# Project Overview
+# LMS Design Patterns Showcase
 
-**Learning Management System (LMS) Design Patterns Showcase**
+A learning-focused **ASP.NET Core 8 Web API** that demonstrates practical application of design patterns from the first six chapters of *Head First Design Patterns*.
 
-This repository is a learning-focused project built to demonstrate practical understanding of the first six chapters of *Head First Design Patterns*. Instead of forcing every pattern into a single application, the project applies only the patterns that naturally solve real business problems within a simplified Learning Management System domain.
-
-The system allows students to submit assignments, process submissions, calculate grades, and trigger post-grading activities such as notifications and progress tracking.
-
-The project intentionally focuses on a small, realistic domain rather than a feature-complete LMS. The emphasis is on understanding the design problems, identifying code smells, and applying appropriate design patterns to improve maintainability, extensibility, and separation of concerns.
+The project follows a single business workflow — create assignment → submit → grade → react — and applies only the patterns that naturally solve real design problems within that workflow. Patterns are not forced into the application; they emerge from the code's own limitations.
 
 ---
 
-# Repository Goal
+## Goals
 
-The primary goal of this repository is to demonstrate:
+1. Identify the design problems that motivated the creation of design patterns.
+2. Recognize when a pattern is appropriate and when it is not.
+3. Apply the right pattern to a real business scenario.
+4. Explain the naïve implementation, its limitations, and how the selected design pattern addresses those limitations.
 
-1. Understanding of the design problems that motivated the creation of design patterns.
-2. Ability to recognize when a pattern is appropriate and when it is not.
-3. Practical application of design patterns in a realistic business domain.
-4. Evolution of code from a naïve implementation to a more flexible and maintainable design.
-
-This repository is **not** intended to be a catalog of design patterns or a showcase where every pattern is artificially inserted into the application.
-
-Instead, it follows a problem-driven approach:
-
-> Use a design pattern only when it provides a meaningful solution to a real design problem.
+This is **not** a pattern catalog. It is a problem-driven project where each pattern appears because it solves a specific, documented problem in the domain.
 
 ---
 
-# Applied Patterns
+## Applied Patterns
 
-The application focuses on three patterns that naturally fit the domain.
+| Pattern | Feature | Problem solved |
+|---|---|---|
+| Strategy | Grading algorithms | Each assignment type requires different logic; avoid large conditionals and make grading extensible |
+| Factory | Strategy resolution | Centralize strategy creation; eliminate scattered `new` calls and reduce coupling |
+| Observer | Post-grading events | Let independent services react to grading without coupling them to the grader |
 
-## Strategy Pattern
-
-Different assignment types require different grading algorithms.
-
-Examples:
-
-* Quiz Assignments
-* Programming Assignments
-* Essay Assignments
-
-Each assignment type uses its own grading strategy without modifying existing grading logic.
-
-**Problem solved:**
-Avoid large conditional statements and make grading behavior extensible.
+The remaining patterns from chapters 1–6 — Decorator, Singleton, and Command — are documented in `docs/notes.md` with study notes and examples. They are not implemented because the domain does not present a problem they would naturally solve.
 
 ---
 
-## Factory Pattern
+## Architecture Decisions
 
-The system must select and create the correct grading strategy based on the assignment type.
+**Why these three patterns?**
 
-A factory centralizes the creation logic and prevents the application from directly instantiating concrete strategy implementations throughout the codebase.
+The core workflow surfaces each pattern naturally. Grading varies by assignment type (Strategy). Something must select the right algorithm (Factory). Grading completion triggers independent downstream reactions (Observer). Each pattern solves a distinct problem; none is added for demonstration value alone.
 
-**Problem solved:**
-Encapsulate object creation and reduce coupling between consumers and implementations.
+**Why in-memory repositories?**
 
----
+The project's goal is to demonstrate pattern understanding, not infrastructure skill. In-memory repositories eliminate database noise and keep the focus on design decisions.
 
-## Observer Pattern
+**Why a hand-rolled event bus?**
 
-After an assignment is graded, multiple business processes need to react:
+Using MediatR would delegate the Observer pattern to a library, hiding the mechanism. Writing `InProcessEventBus` directly keeps the pattern visible and makes the publish/subscribe relationship explicit in the code.
 
-* Send a notification to the student
-* Update learning progress
-* Record audit logs
-* Update analytics
+**Simple Factory, not Factory Method**
 
-Instead of tightly coupling these operations to the grading workflow, the system publishes a domain event and interested components subscribe to it.
-
-**Problem solved:**
-Reduce coupling between the grading process and downstream business actions.
+The factory implementation is a Simple Factory — a class with a method that resolves the correct strategy by assignment type. This is not the GoF Factory Method pattern, which uses inheritance and subclass responsibility. The Simple Factory is the right fit here; Factory Method would require subclassing `GradingService` without solving any real problem in this domain. The distinction is documented in `docs/notes.md`.
 
 ---
 
-# Repository Structure
+## Repository Structure
 
 ```text
-LearningManagementSystem-DesignPatterns
-
-README.md
-
+LMS.sln
+├── LMS.Domain/
+│   ├── Entities/         Student, Assignment, Submission, Grade
+│   ├── Enums/            AssignmentType, SubmissionStatus
+│   └── Interfaces/       IGradingStrategy, IEventBus, ISubscriber
+│                         IAssignmentRepository, ISubmissionRepository
+├── LMS.Application/
+│   ├── Grading/          QuizGradingStrategy, ProgrammingGradingStrategy, EssayGradingStrategy
+│   ├── Factory/          GradingStrategyFactory
+│   ├── Events/           AssignmentGradedEvent, InProcessEventBus
+│   ├── Subscribers/      NotificationSubscriber, ProgressSubscriber, AuditSubscriber
+│   └── Services/         GradingService, SubmissionService
+├── LMS.Infrastructure/
+│   └── Repositories/     InMemoryAssignmentRepository, InMemorySubmissionRepository
+└── LMS.API/
+    ├── Controllers/       AssignmentsController, SubmissionsController
+    └── Program.cs
 docs/
-├── 01-Strategy.md
-├── 02-Observer.md
-├── 03-Decorator.md
-├── 04-Factory.md
-├── 05-Singleton.md
-└── 06-Command.md
-
-src/
-├── LMS.BeforePatterns/
-└── LMS.AfterPatterns/
+└── notes.md
 ```
 
 ---
 
-# Documentation
+## How to Run
 
-The `docs` folder contains personal study notes and summaries for the first six chapters of *Head First Design Patterns*.
+```bash
+cd src/LMS.DesignPatterns/API
+dotnet run
+```
 
-These documents include:
-
-* Key concepts
-* Problems addressed by each pattern
-* Trade-offs
-* Lessons learned
-* Small examples and observations
-
-Not every documented pattern is implemented in the application. This is intentional and reflects a real-world engineering mindset where patterns are selected based on business needs rather than applied for demonstration purposes.
+Open `https://localhost:{port}/swagger` to access the Swagger UI.
 
 ---
 
-# What This Project Demonstrates
+## API Endpoints
 
-By reviewing this repository, readers should be able to see:
+| Method | Route | Description |
+|---|---|---|
+| GET | `/health` | Confirm the application is running |
+| POST | `/assignments` | Create an assignment with a type and answer key |
+| GET | `/assignments/{id}` | Retrieve an assignment |
+| POST | `/submissions` | Submit an answer for an assignment |
+| GET | `/submissions/{id}` | Retrieve a submission with its grade |
+| POST | `/submissions/{id}/grade` | Grade a submission — triggers the full chain |
 
-* The original design challenges.
-* The limitations of a naïve implementation.
-* How design patterns improve the architecture.
-* Why certain patterns were selected while others were not.
-* A practical example of applying object-oriented design principles in a real business domain.
+---
 
-The ultimate objective is to demonstrate **understanding, decision-making, and pattern selection**, rather than simply showing knowledge of pattern definitions.
+## Workflow Walkthrough
+
+The following sequence exercises all three patterns end-to-end. Run it in Swagger UI.
+
+**Step 1 — Create an assignment**
+
+```http
+POST /assignments
+{
+  "title": "Introduction to Algorithms — Quiz 1",
+  "assignmentType": "Quiz",
+  "maxScore": 100,
+  "answerKey": "B"
+}
+```
+
+**Step 2 — Submit an answer**
+
+```http
+POST /submissions
+{
+  "studentId": "<student-id>",
+  "assignmentId": "<assignment-id>",
+  "answer": "B"
+}
+```
+
+**Step 3 — Grade the submission**
+
+```http
+POST /submissions/{submissionId}/grade
+```
+
+This single call exercises all three patterns:
+
+- The **Factory** resolves `QuizGradingStrategy` from the assignment type.
+- The **Strategy** executes the quiz-specific grading algorithm.
+- The **Observer** publishes `AssignmentGradedEvent`; three subscribers react independently — a notification is logged, the student's progress is updated, and an audit entry is written.
+
+**Step 4 — Verify the result**
+
+```http
+GET /submissions/{submissionId}
+```
+
+The response includes the grade, score, and feedback written by the strategy.
+
+---
+
+## Documentation
+
+`docs/notes.md` contains personal study notes for all six chapters of *Head First Design Patterns*, in chapter order. Each section covers: pattern overview, the problem it solves, key concepts, trade-offs, and personal notes. Sections for implemented patterns include a "How it appears in this project" callout pointing to the relevant files.
+
+| Chapter | Pattern | Status |
+|---|---|---|
+| 1 | Strategy | Implemented — `Application/Grading/` |
+| 2 | Observer | Implemented — `Application/Events/` and `Subscribers/` |
+| 3 | Decorator | Documented only |
+| 4 | Factory | Implemented — `Application/Factory/` |
+| 5 | Singleton | Documented only |
+| 6 | Command | Documented only |
