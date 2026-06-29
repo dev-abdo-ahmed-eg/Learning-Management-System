@@ -1,0 +1,10 @@
+namespace LMS.Domain.Entities;
+
+public class Grade
+{
+    public Guid Id { get; set; }
+    public Guid SubmissionId { get; set; }
+    public double Score { get; set; }
+    public string Feedback { get; set; } = string.Empty;
+    public DateTime GradedAt { get; set; }
+}
