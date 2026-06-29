@@ -8,4 +8,5 @@ public class Assignment
     public string Title { get; set; } = string.Empty;
     public AssignmentType AssignmentType { get; set; }
     public double MaxScore { get; set; }
+    public string AnswerKey { get; set; } = string.Empty;
 }
