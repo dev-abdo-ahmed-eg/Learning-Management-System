@@ -280,16 +280,6 @@ Add XML doc comments to all controllers. Enable `IncludeXmlComments` in Swagger 
 
 **Deliverable**: The complete assignment → submission → grading workflow runs end-to-end in Swagger UI with visible responses at each step.
 
----
-
-## Day-by-Day Plan
-
-| Day | Milestones | Expected output |
-|---|---|---|
-| Day 1 | M1 → M2 → M3 → M4 → M5 | All three patterns implemented and wired |
-| Day 2 | M6 → M7 → M8 | Full API, documentation, clean repository |
-
-M1 and M2 are the shortest milestones. If setup is fast, M3–M5 can be completed comfortably in Day 1. M6 is the most time-sensitive on Day 2 — complete the endpoints before documentation.
 
 ---
 

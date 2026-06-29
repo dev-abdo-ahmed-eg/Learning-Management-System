@@ -1,3 +1,5 @@
+using LMS.Application.Factory;
+using LMS.Application.Services;
 using LMS.Domain.Interfaces;
 using LMS.Infrastructure.Repositories;
 
@@ -5,6 +7,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSingleton<IAssignmentRepository, InMemoryAssignmentRepository>();
 builder.Services.AddSingleton<ISubmissionRepository, InMemorySubmissionRepository>();
+builder.Services.AddSingleton<IGradingStrategyFactory, GradingStrategyFactory>();
+builder.Services.AddSingleton<GradingService>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
