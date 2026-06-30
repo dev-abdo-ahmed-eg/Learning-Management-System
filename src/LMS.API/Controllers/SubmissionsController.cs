@@ -96,7 +96,29 @@ public class SubmissionsController : ControllerBase
     }
 
     /// <summary>
-    /// Grades a submission and triggers the Strategy, Factory, and Observer chain.
+    /// Grades a submitted assignment by executing the complete grading workflow.
+    ///
+    /// This endpoint demonstrates the three design patterns implemented in the project:
+    /// <list type="bullet">
+    /// <item>
+    /// <description>
+    /// <b>Factory:</b> Resolves the appropriate grading strategy based on the assignment type.
+    /// </description>
+    /// </item>
+    /// <item>
+    /// <description>
+    /// <b>Strategy:</b> Executes the grading algorithm specific to the resolved assignment type (e.g., Quiz, Programming, or Essay).
+    /// </description>
+    /// </item>
+    /// <item>
+    /// <description>
+    /// <b>Observer:</b> Publishes an <c>AssignmentGraded</c> event after grading, allowing independent subscribers
+    /// (such as notification, progress tracking, audit logging, and analytics) to react without coupling them to the grading workflow.
+    /// </description>
+    /// </item>
+    /// </list>
+    ///
+    /// Returns the calculated grade, feedback, and the updated submission details.
     /// </summary>
     [HttpPost("{id:guid}/grade")]
     [ProducesResponseType(typeof(GradeSubmissionResponse), StatusCodes.Status200OK)]
