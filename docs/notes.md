@@ -66,15 +66,6 @@ The design pattern solves these issues by pulling the varying behaviors out of t
 
 ---
 
-## Key Concepts
-
-*   **Encapsulate what varies:** This is the core principle; separate changing parts from the stable parts.
-*   **Program to an interface, not an implementation:** Use supertypes so that the code is not locked into a specific concrete class.
-*   **Favor composition over inheritance:** Building systems by combining objects (HAS-A) provides more flexibility than static inheritance (IS-A).
-*   **Delegation:** Passing a task to a different object that is better suited to handle it.
-
----
-
 ## Benefits
 
 *   **Dynamic Behavior:** Allows objects to change their behavior at runtime.
